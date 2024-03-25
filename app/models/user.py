@@ -2,12 +2,13 @@ from beanie import Document
 import datetime
 from pydantic import Field
 from typing import Optional, Union
+from chat import Chat
 
 class User(Document):
     username: str = Field(max_length=100)
     created_at: datetime.date = datetime.date.today()
     is_active: bool = True
-    chats: Optional[Union[list, None]]
+    chats: Optional[Union[list[Chat], None]]
 
     class Settings:
         name = "users_database"

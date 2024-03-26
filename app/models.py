@@ -1,9 +1,26 @@
+from __future__ import annotations
 from beanie import Document
 import datetime
 from pydantic import Field
 from typing import Optional, Union, List
-from user import User
-from message import Message
+
+
+class User(Document):
+    username: str = Field(max_length=100)
+    created_at: datetime.date = datetime.date.today()
+    is_active: bool = True
+    chats: Optional[Union[List[Chat], None]]
+
+    class Settings:
+        name = "users_database"
+
+    class Config:
+        json_schema_extra = {
+            "username": "John",
+            "created_at": datetime.date.today(),
+            "is_active": True,
+            "chats": []
+        }
 
 
 class Chat(Document):
@@ -20,6 +37,7 @@ class Chat(Document):
 
     class Settings:
         name = "chats_database"
+
 
 class ChatBot(Chat):
     purpose: str
@@ -48,3 +66,15 @@ class ChatBot(Chat):
             {self.name}AI Advice:
         """
         return template
+    
+
+class Message(Document):
+    user: User
+    username: str
+    text: str
+    chat: Chat
+    type: str = Field(max_length=200)
+    created_at: datetime.date = datetime.datetime.now()
+
+    class Settings:
+        name = "messages_database"

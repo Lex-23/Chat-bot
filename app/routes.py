@@ -32,7 +32,6 @@ async def update_user(user: User, user_id: PydanticObjectId) -> User:
             detail="Resource has not found"
         )
     user_to_update.username = user.username
-    user_to_update.is_active = user.is_active
     user_to_update.chats = user.chats
     await user_to_update.save()
 

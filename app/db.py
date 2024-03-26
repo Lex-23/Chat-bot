@@ -3,7 +3,7 @@ import motor
 import motor.motor_asyncio
 import dotenv
 import os
-from models import User, ChatBot, Message
+from models import User, ChatBot, Message, Profile
 
 dotenv.load_dotenv()
 
@@ -15,5 +15,5 @@ async def init_db():
 
     await beanie.init_beanie(
         database=client[DB_NAME],
-        document_models=[User, ChatBot, Message]
+        document_models=[User, Profile, ChatBot, Message]
     )

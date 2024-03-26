@@ -8,8 +8,7 @@ from typing import Optional, Union, List
 class User(Document):
     username: str = Field(max_length=100)
     created_at: datetime.date = datetime.date.today()
-    is_active: bool = True
-    chats: Optional[Union[List[Link[Chat]], None]]
+    chats: Optional[Union[List[Link[Chat]], None]] = None
 
     class Settings:
         name = "users_database"
@@ -21,6 +20,15 @@ class User(Document):
             "is_active": True,
             "chats": []
         }
+
+class Profile(Document):
+    user: Link[User]
+    email: str
+    age: int
+
+    class Settings:
+        name = "profiles_database"
+
 
 
 class Chat(Document):
@@ -35,9 +43,6 @@ class Chat(Document):
     type: str
     last_message: Link[Message]
 
-    class Settings:
-        name = "chats_database"
-
 
 class ChatBot(Chat):
     purpose: str
@@ -48,15 +53,24 @@ class ChatBot(Chat):
     class Settings:
         name = "chatbots_database"
 
+    def generate_conversation_summary(self, limit: int = 10):
+        messages = self.messages[-limit:]
+        signed_messages = [f"{msg.username} said: {msg}" for msg in messages]
+        return ', '.join(signed_messages)
+
     def get_context(self) -> str:
+        profile = Profile.get(user = self.owner)
         context = f"""
-            Summary of conversation: {', '.join(self.messages)}
+            Summary of conversation: {', '.join(self.generate_conversation_summary())}
             User profile:
             Username: {self.owner.username}
+            Email: {profile.email}
+            Age: {profile.age} 
         """
         return context
 
     def generate_qa_template(self, question: str) -> str:
+
         template = f"""
             {self.purpose}/n
             {self.description}/n

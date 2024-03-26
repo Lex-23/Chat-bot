@@ -1,5 +1,5 @@
 from __future__ import annotations
-from beanie import Document
+from beanie import Document, Link, BackLink
 import datetime
 from pydantic import Field
 from typing import Optional, Union, List
@@ -9,7 +9,7 @@ class User(Document):
     username: str = Field(max_length=100)
     created_at: datetime.date = datetime.date.today()
     is_active: bool = True
-    chats: Optional[Union[List[Chat], None]]
+    chats: Optional[Union[List[Link[Chat]], None]]
 
     class Settings:
         name = "users_database"
@@ -27,13 +27,13 @@ class Chat(Document):
     name: str = Field(max_length=200)
     type: str = Field(max_length=200)
     owner_username: str = Field(max_length=100)
-    owner: User
-    messages: Optional[Union[List[Message], None]]
+    owner: BackLink[User] = Field(original_field="chats")
+    messages: Optional[Union[List[Link[Message]], None]]
     created_at: datetime.date = datetime.datetime.now()
     updated_at: datetime.date = datetime.datetime.now()
     is_active: bool = True
     type: str
-    last_message: Message
+    last_message: Link[Message]
 
     class Settings:
         name = "chats_database"
@@ -69,10 +69,10 @@ class ChatBot(Chat):
     
 
 class Message(Document):
-    user: User
+    user: Link[User]
     username: str
     text: str
-    chat: Chat
+    chat: BackLink[Chat] = Field(original_field="messages")
     type: str = Field(max_length=200)
     created_at: datetime.date = datetime.datetime.now()
 

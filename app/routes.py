@@ -17,7 +17,7 @@ async def list_users() -> List[User]:
 
 
 @router.post('/users', status_code=201)
-async def create_user(request: Request, user: User) -> dict:
+async def create_user(user: User) -> dict:
     if not User.find_one(User.username == user.username):
         await user.create()
         return {"message": f"User <{user.username}> has been saved"}

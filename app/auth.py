@@ -24,5 +24,5 @@ class BasicAuthBackend(AuthenticationBackend):
         if user := await User.find_one(User.username == username):
             return AuthCredentials(["authenticated"]), user
         else:
-            raise AuthenticationError(f'User <{username}> does not exists')
+            raise AuthenticationError('Invalid basic auth credentials')
         

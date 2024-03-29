@@ -1,23 +1,14 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
-from models import User
+from models import User, Profile
 from typing import List
 from beanie import PydanticObjectId
 
 
 router = APIRouter()
 
-@router.get("/users/me")
-def read_current_user(request: Request):
-    return {"username": request.user.username}
 
-@router.get('/users', status_code=200)
-async def list_users() -> List[User]:
-    users = await User.find_all().to_list()
-    return users
-
-
-@router.post('/users', status_code=201)
-async def create_user(user: User) -> dict:
+@router.post('/profiles', status_code=201)
+async def create_profile(profile: Profile) -> dict:
     if not User.find_one(User.username == user.username):
         await user.create()
         return {"message": f"User <{user.username}> has been saved"}

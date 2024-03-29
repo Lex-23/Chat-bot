@@ -25,6 +25,7 @@ class Profile(Document):
     user: Link[User]
     email: str
     age: int
+    bio: Optional[Union[str, None]] = Field(max_length=1000)
 
     class Settings:
         name = "profiles_database"

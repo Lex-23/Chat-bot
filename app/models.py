@@ -23,6 +23,7 @@ class User(Document):
 
 class Profile(Document):
     user: Link[User]
+    username: str
     email: str
     age: int
     bio: Optional[Union[str, None]] = Field(max_length=1000)
@@ -42,7 +43,7 @@ class Chat(Document):
     updated_at: datetime.date = datetime.datetime.now()
     is_active: bool = True
     type: str
-    last_message: Link[Message]
+    last_message: Optional[Union[Link[Message], None]]
 
 
 class ChatBot(Chat):
@@ -64,7 +65,7 @@ class ChatBot(Chat):
         context = f"""
             Summary of conversation: {', '.join(self.generate_conversation_summary())}
             User profile:
-            Username: {self.owner.username}
+            Username: {self.owner.ref.username}
             Email: {profile.email}
             Age: {profile.age} 
         """

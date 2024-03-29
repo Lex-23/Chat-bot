@@ -1,55 +1,42 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
-from models import User, Profile
+from models import Profile
 from typing import List
-from beanie import PydanticObjectId
+from services import create_profile, list_profiles, get_profile, update_profile, delete_profile
 
 
 router = APIRouter()
 
+@router.get('/profiles', status_code=200)
+async def list() -> List[Profile]:
+    return await list_profiles()
 
 @router.post('/profiles', status_code=201)
-async def create_profile(profile: Profile) -> dict:
-    if not User.find_one(User.username == user.username):
-        await user.create()
-        return {"message": f"User <{user.username}> has been saved"}
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail=f"User with username <{user.username}> already exists"
-        )
+async def create(request: Request, data: dict) -> dict:
+    data['user'] = request.user
+    data['username'] = request.user.username
+    profile = Profile(**data)
+    await create_profile(profile)
+    return {"message": f"Profile for user <{profile.user.username}> has been saved"}
  
 
-@router.get('/users/{user_id}', status_code=200)
-async def retreive_user(user_id: PydanticObjectId) -> User:
-    user = await User.get(user_id)
-    return user
+@router.get('/profiles/me', status_code=200)
+async def retreive(request: Request) -> Profile:
+    profile = await get_profile(request.user)
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return profile
 
-@router.put('/users/{user_id}', status_code=200)
-async def update_user(user: User, user_id: PydanticObjectId) -> User:
-    user_to_update = await User.get(user_id)
-    if not user_to_update:
-        raise HTTPException(
-            status_code=404,
-            detail="Resource has not found"
-        )
-    await user_to_update.set(
-        {
-            User.username: user.username,
-            User.chats: user.chats
-        }
-    )
-    
-    updated_user = await user_to_update.sync()
-    return updated_user
 
-@router.delete('/users/{user_id}', status_code=204)
-async def delete_user(user_id: PydanticObjectId):
-    user_to_delete = await User.get(user_id)
-    if not user_to_delete:
-        raise HTTPException(
-            status_code=404,
-            detail="Resource has not found"
-        )
-    await user_to_delete.delete()
+@router.put('/profiles', status_code=200)
+async def update(request: Request, data: dict) -> Profile:
+    profile_to_update = await get_profile(request.user)
+    if profile_to_update is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return await update_profile(profile=profile_to_update, data=data)
 
-    return {"message": f"User <{user_to_delete.username}> was deleted succesfully"}
+@router.delete('/profiles', status_code=204)
+async def delete(request: Request):
+    profile_to_delete = await get_profile(request.user)
+    if profile_to_delete is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    await delete_profile(profile_to_delete)

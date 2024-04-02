@@ -3,7 +3,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from fastapi import FastAPI
-from routes import router
+from api import router
 from db import init_db
 
 from auth import BasicAuthBackend
@@ -13,6 +13,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(
+    debug=True,
     lifespan=lifespan, 
     middleware=[Middleware(AuthenticationMiddleware, backend=BasicAuthBackend())]
     )

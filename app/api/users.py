@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request
 from models import User
 from typing import List
 from beanie import PydanticObjectId
-from services import get_user, list_users, create_user, update_user, delete_user, is_user_exists
+from services import *
 
 
 router = APIRouter()

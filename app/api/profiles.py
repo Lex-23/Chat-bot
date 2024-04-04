@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from models import Profile
 from typing import List
-from services import create_profile, list_profiles, get_profile, update_profile, delete_profile
+from services import *
 
 
 router = APIRouter()

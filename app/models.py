@@ -1,5 +1,5 @@
 from __future__ import annotations
-from beanie import Document, Link, BackLink
+from beanie import Document, Link
 import datetime
 from pydantic import Field
 from typing import Optional, Union, List

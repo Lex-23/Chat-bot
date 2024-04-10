@@ -5,7 +5,7 @@
 4. run 'make build'
 5. run 'make start'
 
-*** .env example ***
+### .env example
 ```
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"

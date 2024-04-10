@@ -11,7 +11,7 @@ class User(Document):
     chats: Optional[Union[List[Link[Chat]], None]] = None
 
     class Settings:
-        name = "users_database"
+        name = "users"
 
     class Config:
         json_schema_extra = {
@@ -29,7 +29,7 @@ class Profile(Document):
     bio: Optional[Union[str, None]] = Field(max_length=1000)
 
     class Settings:
-        name = "profiles_database"
+        name = "profiles"
 
 
 
@@ -51,7 +51,7 @@ class ChatBot(Chat):
     communicative_style: str = Field(max_length=500)
 
     class Settings:
-        name = "chatbots_database"
+        name = "chatbots"
 
     def generate_conversation_summary(self, limit: int = 20):
         messages = self.messages[-limit:]
@@ -90,4 +90,4 @@ class Message(Document):
     created_at: datetime.datetime = datetime.datetime.now()
 
     class Settings:
-        name = "messages_database"
+        name = "messages"

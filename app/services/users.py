@@ -1,9 +1,14 @@
 from models import User
 from typing import List
 from beanie import PydanticObjectId
+import pdb
 
 
 def list_users() -> List[User]:
+    # pdb.set_trace()
+    # users = await User.find_all().to_list()
+    # pdb.set_trace()
+    # return users
     return User.find_all().to_list()
 
 def get_user(user_id: PydanticObjectId) -> User:

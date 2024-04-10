@@ -1,4 +1,5 @@
 from models import User
+from services import create_user
 
 from starlette.authentication import (
     AuthCredentials, AuthenticationBackend, AuthenticationError
@@ -24,5 +25,6 @@ class BasicAuthBackend(AuthenticationBackend):
         if user := await User.find_one(User.username == username):
             return AuthCredentials(["authenticated"]), user
         else:
-            raise AuthenticationError('User is not exists')
+            await create_user(User(username=username))
+            return await self.authenticate(conn)
         

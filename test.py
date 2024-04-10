@@ -73,4 +73,3 @@ while True:
     response = chain.invoke({"question": question, "context": context})
     user.dialog_history.append(f'PsychologistAI: {response}')
     print(f"> {response}")
-

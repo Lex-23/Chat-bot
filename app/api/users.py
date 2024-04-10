@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.get("/users/me")
 async def read_current_user(request: Request):
-    return {"username": request.user.username}
+    return {"username": request.user.username, "id": str(request.user.id)}
 
 @router.get('/users', status_code=200)
 async def list() -> List[User]:

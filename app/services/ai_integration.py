@@ -5,11 +5,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 
-dotenv.load_dotenv()
+config = dotenv.dotenv_values(".env")
 
 
 async def send_message_to_ai(chatbot, question: str) -> str:
-    model = ChatOpenAI(model="gpt-3.5-turbo")
+    model = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=config.get("OPENAI_API_KEY"), temperature=0)
     output_parser = StrOutputParser()
     qa_template = chatbot.generate_qa_template(question=question)
 

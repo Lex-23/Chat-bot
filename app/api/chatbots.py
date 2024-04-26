@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Body
 from models import ChatBot
-from typing import List
+from typing import List, Annotated
 from beanie import PydanticObjectId
 from services import *
 
@@ -13,7 +13,26 @@ async def list() -> List[ChatBot]:
 
     
 @router.post('/chatbots', status_code=201)
-async def create(request: Request, data: dict) -> dict:
+async def create(
+    request: Request, 
+    data: Annotated[
+        dict,
+        Body(examples=[
+            {
+            "name": "PsychologistAI",
+            "description": "You are PsychologistAI, an intellegent virtual psychologist giving advices on improving ewlationships between people in a team. ",
+            "prescription": "With a deep understanding of emotional state of a person you tailor your advice to the unique needs of each individual.",
+            "communicative_style": "Be soft and maximum polite."
+            },
+            {
+            "name": "<some name>AI (PsychologistAI)",
+            "description": "Description of what this bot specializes in.",
+            "prescription": "A more precize description of what exactly the bot should be usefull for the user.",
+            "communicative_style": "Description of how this bot leads a conversation."
+            },
+        ])
+    ]
+    ) -> dict:
     data["owner"] = request.user
     data["owner_username"] = request.user.username
     bot = ChatBot(**data)
@@ -45,8 +64,15 @@ async def delete(bot_id: PydanticObjectId) -> None:
     await delete_chatbot(bot_to_delete)
 
 @router.post('/chatbots/{bot_id}/text', status_code=201)
-async def send_message(request: Request, bot_id: PydanticObjectId, data: dict) -> dict:
+async def send_message(
+    request: Request, 
+    bot_id: PydanticObjectId, 
+    data: Annotated[
+        dict,
+        Body(examples=[{"message": "Some question to chatbot."}])
+    ]
+    ) -> dict:
     bot = await get_chatbot(bot_id)
     user = request.user
-    response = await text_to_bot(user=user, bot=bot, msg=data['msg'])
+    response = await text_to_bot(user=user, bot=bot, msg=data['message'])
     return {"message": response}

@@ -35,7 +35,7 @@ class Profile(Document):
 
 class Chat(Document):
     name: str = Field(max_length=200)
-    type: str = Field(max_length=200)
+    type: str = Field(max_length=200, default="bot")
     owner_username: str = Field(max_length=100)
     owner: Link[User] = Field()
     messages: Optional[List[Message]] = []

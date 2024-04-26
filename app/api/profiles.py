@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, Body
 from models import Profile
-from typing import List
+from typing import List, Annotated
 from services import *
 
 
@@ -11,7 +11,19 @@ async def list() -> List[Profile]:
     return await list_profiles()
 
 @router.post('/profiles', status_code=201)
-async def create(request: Request, data: dict) -> dict:
+async def create(
+    request: Request, 
+    data: Annotated[
+        dict,
+        Body(examples=[
+            {
+            "email": "user.email@mail.com",
+            "age": 20,
+            "bio": "A python developer with more than 4 years of experience.",
+            },
+        ])
+    ]
+    ) -> dict:
     data['user'] = request.user
     data['username'] = request.user.username
     profile = Profile(**data)
